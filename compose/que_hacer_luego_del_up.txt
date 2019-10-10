@@ -1,0 +1,14 @@
+docker-compose exec web bash  # Entro al container
+cd ejemplo_de_django_en_docker_compose
+
+# Correr migraciones
+python manage.py migrate
+
+# Crear superuser de Django
+python manage.py createsuperuser
+
+# Comprobar que existe en la base de datos
+exit  # Salgo del container
+docker-compose exec db bash  # Entro al container de la db
+psql -U postgres  # Entro a postgres (duh)
+select * from auth_user;  # Acá debería aparecer el usuario que creé

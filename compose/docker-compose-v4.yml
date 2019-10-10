@@ -1,0 +1,27 @@
+# Volumen
+
+version: '3'
+
+services:
+  db:
+    container_name: ${DB_CONTAINER_NAME}  # Leo la variable "DB_CONTAINER_NAME" del .env
+    image: postgres
+    networks:
+      - best_network_ever
+  web:
+    container_name: ${WEB_CONTAINER_NAME}  # Leo la variable "WEB_CONTAINER_NAME" del .env
+    build: .  # Esto significa que docker-compose debe usar el Dockerfile que se encuentra en este mismo directorio
+    command: python /app/ejemplo_de_django_en_docker_compose/manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    networks:
+      - best_network_ever
+    depends_on:
+      - db
+    volumes:
+      - ./compose_volume_content:/app/unnombrerandom/aca_esta_el_compose_volume_content
+
+networks:
+  best_network_ever:  # El ":" es intencional, ya que más abajo se le podría agregar configuraciones
+
+# db -> web

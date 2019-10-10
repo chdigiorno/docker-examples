@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+  web:
+    build: .  # Esto significa que docker-compose debe usar el Dockerfile que se encuentra en este mismo directorio
+    command: python /app/ejemplo_de_django_en_docker_compose/manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+# db -> web
