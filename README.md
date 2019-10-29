@@ -92,7 +92,7 @@ docker run hello-world
 
 `docker run -it -p 80:80 {nombre imagen}` -> levanta un contenedor en base a una imagen
 
-- se puede agregar `–name {nombre custom}` para darle un nombre custom a un contenedor)
+- se puede agregar `–name {nombre custom}` para darle un nombre custom al contenedor
 - `-t`: queremos que haya una pseudo-tty/terminal (text input output environment) generada que sh/bash puedan usar (ej. `docker run ubuntu:14.04` cortaría enseguida por no encontrar ninguna terminal ni tener nada que hacer)
 - `-i`/`--interactive` permite enviar comandos al contenedor mediante input estándar ("STDIN"), lo cual significa que se puede tipear comandos a la pseudo-tty/terminal creada por `-t` de forma interactiva
 - `-p`: especifica el puerto a utilizar en el host, y el puerto a utilizar en el contenedor
@@ -112,7 +112,9 @@ Extra: `docker stop $(docker ps -q)` -> busca los contenedores que están corrie
 `docker start {id container}` -> levanta contenedores detenidos
 
 
-`docker rm {id contenedor}` (--force si el contenedor está corriendo) -> borra un contenedor
+`docker rm {id contenedor}` -> borra un contenedor
+
+- `--force`: es necesario usarlo si el contenedor está corriendo
 
 
 `docker rmi {id imagen}` -> borra una imagen
@@ -126,7 +128,7 @@ Extra: `docker stop $(docker ps -q)` -> busca los contenedores que están corrie
 `docker run -d -p 80:80 -v {path en host}:{path en container} {nombre imagen}`
 
 - Usando la opción `-v`, creamos volúmenes con nombre (named volumes)
-- Se declara `VOLUME` en un Dockerfile para especificar dónde el contenedor va a escribir datos de la aplicación. El volumen es configurado independientemente de lo que se haga en el `docker run`; ningún paso del Dockerfile podrá hacer cambios dentro del árbol de ese directorio. No se pueden utilizar paths del host; son volúmenes anónimos	.
+- Se declara `VOLUME` en un Dockerfile para especificar dónde el contenedor va a escribir datos de la aplicación. El volumen es configurado independientemente de lo que se haga en el `docker run`; ningún paso del Dockerfile podrá hacer cambios dentro del árbol de ese directorio. No se pueden utilizar paths del host; son volúmenes anónimos.
   - Ya que se puede usar `docker run -v` sin importar si se declara o no un `VOLUME`, y puede haber efectos secundarios confusos, generalmente se evita declarar `VOLUME` en los Dockerfiles.
 
 
