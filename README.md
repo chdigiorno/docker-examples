@@ -57,6 +57,42 @@ Un volumen es un mecanismo de persistencia de datos utilizado por contenedores d
 Los bind mounts son parecidos; hay dos direcciones, una en el host y otra en el contenedor, que apuntan a un mismo archivo. Al contrario de los volúmenes, no pueden ser configurados en un Dockerfile. Pueden existir en el filesystem del host, y ser modificados por procesos fuera de Docker.
 
 
+### Dockerfile
+
+Es el archivo que contiene las instrucciones que se correrán sobre una imagen padre especificada. Se lo utiliza a la hora de buildear una imagen.
+
+Instrucciones que se pueden utilizar:
+
+- `ARG <VAR_NAME>=<value>`: crea una variable con un valor default; se le puede asignar otro distinto enviándolo por parámetro. ARG puede ser utilizado una o más veces, pero sólo arriba de la instrucción `FROM`. Sirve solamente dentro del proceso de buildeo de la imagen.
+
+- `ENV <VAR_NAME> <value>`: crea una variable que será utilizada en los contenedores que se levanten en base a la imagen que se está buildeando.
+
+- `FROM <nombre imagen padre>`: especifica la imagen en base a la cuál se creará la imagen de la aplicación.
+
+- `WORKDIR <directorio dentro de la imagen>`: especifica un directorio donde se ejecutarán todas las instrucciones que se encuentren abajo de ésta.
+
+- `RUN <comando>`: se ejecuta un comando dentro de la imagen.
+
+- `COPY <directorio dentro del mismo donde se encuentra el Dockerfile> <directorio dentro de la imagen>`: copia un archivo que existe dentro del host, buscando a partir de donde se encuentra ubicado el Dockerfile, y lo replica dentro de un directorio perteneciente a la imagen a crear.
+
+- `ADD [--chown=<usuario>:<grupo>] <src> <dest>`: copia un archivo que existe dentro del host o pertenezca a una URL, y lo replica dentro de un directorio perteneciente a la imagen a crear. Funciona distinto a `COPY`, con soporte de URLs y extracciones de .tar de forma local. Entre las buenas prácticas de Docker, se recomienda evitar usar esta instrucción y usar `COPY` o múltiples `RUN`. La opción `--chown` solamente puede ser usada para contenedores de Linux.
+
+- `VOLUME <directorio dentro de la imagen>`: especifica dónde el contenedor va a escribir datos de la aplicación para su persistencia. El volumen es configurado independientemente de lo que se haga en el `docker run`; ningún paso del Dockerfile podrá hacer cambios dentro del árbol de ese directorio. No se pueden utilizar paths del host; son volúmenes anónimos. (Recomendación: crear volúmenes con nombre en el `docker run`)
+
+- `USER <nombre de usuario>[:<nombre de grupo>]`: especifica el nombre de usuario (o UID) y, opcionalmente, el grupo de usuario (o GID) a usar al correr la imagen y para ejecutar las instrucciones del Dockerfile que se encuentren abajo de ésta.
+
+- `EXPOSE <puerto> [<puerto>/<protocolo>]`: le informa a Docker que el contenedor escuchará en los puertos especificados. Por default, el protocolo es TCP. El puerto no se publica con esta instrucción (lo cual se hace en el `docker run`), sino que simplemente sirve como "documentación".
+
+- `CMD`: especifica una instrucción para que ejecute el contenedor en caso de que no se provea una en el `docker run`. Solamente puede haber *un* `CMD` en el mismo Dockerfile. Existen 3 formas de utilizarlo:
+  - Forma exec: `CMD ["comando o archivo ejecutable", "parámetro 1", "parámetro 2", ..., "parámetro N"]` -> se ejecuta el ejecutable de forma directa, sin ningún shell processing.
+  - Forma shell: `CMD <comando> <parámetro 1> <parámetro 2> ... <parámetro N>` -> se ejecuta el comando de la forma `/bin/sh -c <comando + parámetros>`.
+  - Forma de parámetros default para `ENTRYPOINT`: `CMD ["parámetro 1", "parámetro 2", ..., "parámetro N"]` -> se utiliza cuando se emplea el uso de `ENTRYPOINT`, pasándole al mismo parámetros default que se usan en los casos donde al contenedor no se le den unos.
+
+- `ENTRYPOINT`: permite configurar al contenedor que correrá como ejecutable. Siempre hay uno; si no se lo especifica, es `/bin/sh -c`. Si corre un ejecutable, usará los parámetros que se le pasen al `docker run`, o los que contenga `CMD`. Si se utiliza `CMD`, éste debe estar abajo de `ENTRYPOINT`. Existen 2 formas de utilizarlo:
+  - Forma exec: `ENTRYPOINT ["comando o archivo ejecutable", "parámetro 1", "parámetro 2", ..., "parámetro N"]` -> se utilizan los parámetros especificados más los que se le intente enviar mediante `CMD` o `docker run`.
+  - Forma shell: `ENTRYPOINT <comando> <parámetro 1> <parámetro 2> ... <parámetro N>` -> ignora cualquier parámetro que se le intente enviar mediante `CMD` o `docker run`.
+
+
 ### Instalación
 ```
 sudo apt-get update
@@ -93,6 +129,7 @@ docker run hello-world
 `docker run -it -p 80:80 {nombre imagen}` -> levanta un contenedor en base a una imagen
 
 - se puede agregar `–name {nombre custom}` para darle un nombre custom al contenedor
+- también se puede especificar un comando que el contenedor deba correr (si no se escribe ninguno, se utiliza el descripto en el Dockerfile)
 - `-t`: queremos que haya una pseudo-tty/terminal (text input output environment) generada que sh/bash puedan usar (ej. `docker run ubuntu:14.04` cortaría enseguida por no encontrar ninguna terminal ni tener nada que hacer)
 - `-i`/`--interactive` permite enviar comandos al contenedor mediante input estándar ("STDIN"), lo cual significa que se puede tipear comandos a la pseudo-tty/terminal creada por `-t` de forma interactiva
 - `-p`: especifica el puerto a utilizar en el host, y el puerto a utilizar en el contenedor
@@ -125,11 +162,11 @@ Extra: `docker stop $(docker ps -q)` -> busca los contenedores que están corrie
 - `-d`: corre en el background en vez de apoderarse de la consola
 
 
-`docker run -d -p 80:80 -v {path en host}:{path en container} {nombre imagen}`
+`docker run -d -p 80:80 -v {nombre para el volumen}:{path en container} {nombre imagen}`
 
 - Usando la opción `-v`, creamos volúmenes con nombre (named volumes)
-- Se declara `VOLUME` en un Dockerfile para especificar dónde el contenedor va a escribir datos de la aplicación. El volumen es configurado independientemente de lo que se haga en el `docker run`; ningún paso del Dockerfile podrá hacer cambios dentro del árbol de ese directorio. No se pueden utilizar paths del host; son volúmenes anónimos.
   - Ya que se puede usar `docker run -v` sin importar si se declara o no un `VOLUME`, y puede haber efectos secundarios confusos, generalmente se evita declarar `VOLUME` en los Dockerfiles.
+- En vez de un nombre para el volumen, se puede especificar un path del host, para que los datos se compartan. Es fácil saber dónde se guardarán los datos cuando el contenedor quiera escribir en el directorio, ya que se está especificando un lugar dentro del host, y Docker no se encargará de manejar todo por sí mismo. Se lo conoce como bind mount.
 
 
 `docker rm -v {container}` -> borra el container + sus volúmenes (se pueden especificar cuáles volúmenes borrar y cuáles mantener)
