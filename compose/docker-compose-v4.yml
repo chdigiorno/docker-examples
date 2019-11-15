@@ -18,6 +18,8 @@ services:
       - best_network_ever
     depends_on:
       - db
+    env_file:
+      - .env  # En este .env hay credenciales! No hacer en un proyecto real!
     volumes:
       - ./compose_volume_content:/app/unnombrerandom/aca_esta_el_compose_volume_content
 

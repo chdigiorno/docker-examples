@@ -18,6 +18,8 @@ services:
       - best_network_ever
     depends_on:
       - db
+    env_file:
+      - .env  # En este .env hay credenciales! No hacer en un proyecto real!
 
 networks:
   best_network_ever:  # El ":" es intencional, ya que más abajo se le podría agregar configuraciones
