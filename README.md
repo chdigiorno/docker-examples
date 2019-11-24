@@ -207,6 +207,13 @@ Es una herramienta que permite manejar con facilidad múltiples contenedores jun
 **Service != container**. Un contenedor se levanta en base a un servicio definido en el ".yml".
 
 
+### Instalación
+```
+sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
+
+
 ### Networks
 Las networks definen las reglas de comunicación entre contenedores, y entre un contenedor y su host.
 
@@ -215,13 +222,6 @@ Los contenedores de Docker se comunican entre sí en networks creadas por Docker
 
 ### Dependencias entre servicios
 A veces, necesitamos crear una cadena de dependencias entre los servicios, por lo que algunos son cargados antes que otros. Esto se logra utilizando la keyword `depends_on`.
-
-
-### Instalación
-```
-sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-```
 
 
 ### Algunos comandos
