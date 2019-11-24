@@ -32,7 +32,7 @@ Docker ofrece a los desarrolladores un mayor control y autonomía sobre la plata
 
 A la hora de desarrollar y probar el funcionamiento de una aplicación, es deseable que el entorno de desarrollo sea lo más parecido posible al de producción. Al mismo tiempo, también es útil que el mismo sea lo más rápido posible, ya que se busca un uso interactivo. Teniendo en cuenta todo lo dicho hasta ahora, podemos afirmar que Docker viene como anillo al dedo, debido a su performance y la facilidad que provee para configurar aplicaciones.
 
-Como Docker corre imágenes de Linux, utilizarlo en Windows o MacOS implica la utilización de herramientas de Docker que emplean virtualización, perdiéndose una pequeña parte de la ganancia en performance que se ofrece. Sin embargo, se introdujo la existencia de contenedores de Windows, los cuales utilizan los binarios del sistema operativo, eliminando la necesidad de depender de máquinas virtuales y hypervisors.
+Como Docker corre imágenes de Linux, utilizarlo en Windows o MacOS implica la utilización de herramientas de Docker que emplean virtualización de máquinas, perdiéndose performance de manera notable. Sin embargo, se introdujo la existencia de contenedores de Windows, los cuales utilizan los binarios del sistema operativo, eliminando la necesidad de depender de máquinas virtuales y hypervisors.
 
 
 ### Instalación
@@ -57,8 +57,6 @@ docker run hello-world
 ### Contenedores de Docker
 Un contenedor de Docker es una instancia en ejecución de una imagen. A partir de una misma imagen, se puede crear varios contenedores (todos corriendo la misma aplicación). Un contenedor corre como un proceso en el host.
 
-Ya que los contenedores no tienen un sistema operativo separado, pueden ser portados a través de diferentes plataformas. Cuando las aplicaciones deben ser desarrolladas y testeadas en plataformas distintas, los contenedores de Docker son una opción ideal.
-
 La plataforma siempre está corriendo encima del host. Los contenedores contienen los binarios, librerías, y a la aplicación en sí. Como esos binarios y librerías corren en el kernel del host, es posible procesar ejecutar rápidamente.
 
 En contraste, las máquinas virtuales corren en un hypervisor e incluyen su propio sistema operativo. Esto incrementa su tamaño notablemente, haciendo que setupear máquinas virtuales sea más complejo y requiera más recursos tener corriendo cada una.
@@ -81,9 +79,13 @@ Para crear una imagen, se utiliza un archivo de texto llamado Dockerfile, en el 
 Una imagen de docker puede ser buildeada localmente en base a otra, o descargada de hub.docker.com.
 
 #### Capas
-Una imagen contiene capas; cada una de ellas es un conjunto de diferencias con respecto a la capa anterior causadas por determinadas instrucciones del Dockerfile. Docker utiliza una caché de capas para optimizar el proceso de generación de imágenes, logrando que sea más rápido.
+Una imagen contiene capas; cada una de ellas es un conjunto de diferencias con respecto a la capa anterior causadas por determinadas instrucciones del Dockerfile. Docker utiliza una caché de capas para optimizar el proceso de generación de imágenes, logrando que sea más rápido debido a que éstas no se deben rebuildear desde cero.
 
-Hay comandos especificables para el Dockerfile (ADD, RUN y COPY) que causan que la imagen anterior cambie, creando capas nuevas. Aunque existen otros comandos utilizables, éstos solamente crean capas intermedias que no influencian en el tamaño de la imagen.
+Hay comandos especificables para el Dockerfile (ADD, RUN y COPY) que causan que la imagen anterior cambie, creando capas nuevas. Aunque existen otros comandos utilizables, éstos solamente crean capas intermedias que no influencian en el tamaño de la imagen. Sin embargo, si al momento de buildear la nueva imagen se encuentra una instrucción para la cual no hay una capa cacheada, no se intentará leer de la caché ninguna de las siguientes instrucciones, por lo que es conveniente llevar a cabo prácticas para minimizar la invalidación de la caché como solamente copiar archivos que sean necesarios en el próximo paso y evitar usar comandos al principio del Dockerfile que siempre vayan a generar cambios.
+
+La parte problemática de las capas es que aumentan el tamaño de la imagen, haciendo que ocupen más espacio, se tarde más en descargarlas, e incluso es posible que queden componentes que jamás vayan a ser usados.
+
+Se recomienda fuertemente no utilizar comandos como `apt-get update` en una instrucción separada a la instrucción donde se realizan instalaciones en base al update, debido a que el `update` puede estar cacheado (por lo que no se ejecutará) pero cambiar las instalaciones va a invalidar la caché y puede haber problemas con los paquetes a descargar; en vez de eso, conviene juntar todo en una sola instrucción del Dockerfile.
 
 
 ### Persistencia en Docker
@@ -94,13 +96,13 @@ Los bind mounts son parecidos; hay dos direcciones, una en el host y otra en el 
 
 ### Dockerfile
 
-Es el archivo que contiene las instrucciones que se correrán sobre una imagen padre especificada. Se lo utiliza a la hora de buildear una imagen.
+Es el archivo que contiene las instrucciones que se correrán sobre una imagen padre especificada. Se lo utiliza a la hora de buildear una imagen, cuyos contenedores serán levantados con el comando `docker-run`.
 
 Instrucciones que se pueden utilizar:
 
 - `ARG <VAR_NAME>=<value>`: crea una variable con un valor default; se le puede asignar otro distinto enviándolo directamente por parámetro en el `docker build` de la forma `--build-arg <VAR_NAME>=<value>`. ARG puede ser utilizado una o más veces, pero sólo arriba de la instrucción `FROM`. Sirve solamente dentro del proceso de buildeo de la imagen.
 
-- `ENV <VAR_NAME> <value>`: crea una variable que será utilizada en los contenedores que se levanten en base a la imagen que se está buildeando. Esta variable puede ser utilizada dentro de un comando `RUN` dentro del mismo Dockerfile.
+- `ENV <VAR_NAME> <value>`: crea una variable de entorno que será utilizada en los contenedores que se levanten en base a la imagen que se está buildeando. Esta variable puede ser utilizada dentro de un comando `RUN` dentro del mismo Dockerfile.
 
 - `FROM <nombre imagen padre>`: especifica la imagen en base a la cuál se creará la imagen de la aplicación.
 
@@ -118,11 +120,11 @@ Instrucciones que se pueden utilizar:
 
 - `EXPOSE <puerto> [<puerto>/<protocolo>]`: le informa a Docker que el contenedor escuchará en los puertos especificados, permitiendo que los demás contenedores se puedan comunicar con éste; el puerto no se publica para procesos ajenos a Docker con esta instrucción (lo cual se hace en el `docker run`). Por default, el protocolo es TCP.
 
-- `ENTRYPOINT`: permite configurar al contenedor que correrá como ejecutable. Siempre hay uno; si no se lo especifica, es `/bin/sh -c`. Si corre un ejecutable, usará los parámetros que se le pasen al `docker run`, o los que contenga `CMD`. Si se utiliza `CMD`, éste debe estar abajo de `ENTRYPOINT`. Existen 2 formas de utilizarlo:
+- `ENTRYPOINT`: especifica una instrucción para que ejecute el contenedor al ser levantado. Siempre hay uno; si no se lo especifica en el Dockerfile o en el `docker run`, es `/bin/sh -c`. Si corre un ejecutable, usará los parámetros que se le pasen al `docker run`, o los que contenga `CMD`. Si se utiliza `CMD`, éste debe estar abajo de `ENTRYPOINT`. Existen 2 formas de utilizarlo:
   - Forma exec: `ENTRYPOINT ["comando o archivo ejecutable", "parámetro 1", "parámetro 2", ..., "parámetro N"]` -> se utilizan los parámetros especificados más los que se le intente enviar mediante `CMD` o `docker run`.
   - Forma shell: `ENTRYPOINT <comando> <parámetro 1> <parámetro 2> ... <parámetro N>` -> ignora cualquier parámetro que se le intente enviar mediante `CMD` o `docker run`.
 
-- `CMD`: especifica una instrucción para que ejecute el contenedor en caso de que no se provea una en el `docker run`. Solamente puede haber *un* `CMD` en el mismo Dockerfile. Existen 3 formas de utilizarlo:
+- `CMD`: especifica una instrucción para que ejecute el contenedor al ser levantado, aunque si se provee uno en el `docker run` se utilizará ese. Solamente puede haber *un* `CMD` en el mismo Dockerfile. Existen 3 formas de utilizarlo:
   - Forma exec: `CMD ["comando o archivo ejecutable", "parámetro 1", "parámetro 2", ..., "parámetro N"]` -> se ejecuta el ejecutable de forma directa, sin ningún shell processing.
   - Forma shell: `CMD <comando> <parámetro 1> <parámetro 2> ... <parámetro N>` -> se ejecuta el comando de la forma `/bin/sh -c <comando + parámetros>`, aplicando utilidades de shell como reemplazo de variables de entorno y permitiendo el uso de backslashes (`\`) para continuar la instrucción en la siguiente línea del Dockerfile.
   - Forma de parámetros default para `ENTRYPOINT`: `CMD ["parámetro 1", "parámetro 2", ..., "parámetro N"]` -> se utiliza cuando se emplea el uso de `ENTRYPOINT`, pasándole al mismo parámetros default que se usan en los casos donde al contenedor no se le den unos.
@@ -139,18 +141,18 @@ Instrucciones que se pueden utilizar:
 `docker pull {nombre imagen}` -> descarga la imagen especificada de dockerhub, ahorrando tener que hacerlo al querer levantar containers de esa imagen
 
 
-`docker build -t {nombre custom imagen} .` -> crea una imagen utilizando el Dockerfile existente en el directorio
+`docker build -t {nombre custom que se le dará a la imagen} --build-arg {variable}={valor} .` -> crea una imagen utilizando el Dockerfile existente en el directorio y uno o más argumentos a través de `--build-arg` (se lo puede utilizar más de una vez) que reemplazarán los especificados con `ARG` en el Dockerfile
 
 
-`docker run -dit -p 80:80 --env-file={nombre del env_file} {nombre imagen}` -> levanta un contenedor en base a una imagen
+`docker run -dit -p 80:80 --env-file={nombre del env_file} {nombre imagen} {comando}` -> levanta un contenedor en base a una imagen
 
 - se puede agregar `–name {nombre custom}` para darle un nombre custom al contenedor
-- también se puede especificar un comando que el contenedor deba correr (si no se escribe ninguno, se utiliza el descripto en el Dockerfile)
+- se puede especificar al final un comando que el contenedor deba correr (si no se escribe ninguno, se utiliza el descripto en el Dockerfile), y un entrypoint con `--entrypoint {ejecutable}` para overridear el especificado en el Dockerfile (o el default)
 - `-d`: levanta un contenedor de forma "detachada"; corre en el background en vez de apoderarse de la consola
 - `-t`: queremos que haya una pseudo-tty/terminal (text input output environment) generada que sh/bash puedan usar (ej. `docker run ubuntu:14.04` cortaría enseguida por no encontrar ninguna terminal ni tener nada que hacer)
 - `-i`/`--interactive` permite enviar comandos al contenedor mediante input estándar ("STDIN"), lo cual significa que se puede tipear comandos a la pseudo-tty/terminal creada por `-t` de forma interactiva
 - `-p`: especifica el puerto a utilizar en el host, y el puerto a utilizar en el contenedor
-  - Si usamos `expose` en vez de `-p`, el servicio en el contenedor no sería accesible desde afuera de Docker; solamente desde adentro de otros contenedores. `-p` sin `expose` lo usa implícitamente
+  - `--expose`: el servicio en el contenedor no sería accesible desde afuera de Docker; solamente desde adentro de otros contenedores. `-p` sin `--expose` lo usa implícitamente
 - `--env-file`: especifica el nombre de un env_file, el cual es archivo que contiene una o más variables de entorno para utilizar en el contenedor; en caso de que una variable de entorno existiese previamente por haber sido creada en el Dockerfile, ésta es reemplazada por la nueva
 
 
@@ -276,5 +278,5 @@ ______________
 ## Cuándo no usar Docker (ejemplos):
 
 - Se quiere maximizar la performance (si bien tiene menos overhead que usar una maquina virtual, lo sigue habiendo).
-- Se considera la seguridad como algo crítico: mantener diferentes componentes de la aplicación separados en contenedores tiene sus beneficios relacionados al tema, pero trae problemas difíciles de solucionar (la tecnología de los contenedores tienen acceso a los subsistemas del kernel).
+- Se considera la seguridad como algo crítico: mantener diferentes componentes de la aplicación separados en contenedores tiene sus beneficios relacionados al tema, pero trae problemas difíciles de solucionar; la tecnología de los contenedores tienen acceso a los subsistemas del kernel (por lo que un "kernel panic" causado por un contenedor afectará también al host) y sus recursos (si un contenedor puede monopolizar el uso de ciertos recursos, puede afectar a los demás contenedores, facilitando un ataque denial-of-service debido a que hay partes del sistema a las que ya no se puede acceder), y si un atacante logra el acceso a un contenedor y escapa del mismo llegando a otro o incluso al host, tendrá los mismos privilegios de usuario que tenía en el contenedor al que entró originalmente (por eso se recomienda no usar por default al usuario root).
 - Es un requerimiento no negociable que haya una interfaz gráfica dentro del contenedor; si bien existen algunos trucos que se pueden utilizar, como X-forwarding o VNC, son muy toscos.
