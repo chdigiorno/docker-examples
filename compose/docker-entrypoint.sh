@@ -1,5 +1,5 @@
 #!/bin/bash
-sleep 3 # Aunque web depende de db, y se setea el orden para levantar los contenedores, web no sabe que, para funcionar, necesita que la base de datos esté levantada, así que ponemos un speel de 3 segundos
+sleep 3 # Aunque web depende de db, y se setea el orden para levantar los contenedores, web no sabe que, para funcionar, necesita que la base de datos esté levantada, así que ponemos un sleep de 3 segundos
 cd ejemplo_de_django_en_docker_compose
 python manage.py makemigrations
 python manage.py migrate
