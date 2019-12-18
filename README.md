@@ -104,7 +104,7 @@ Instrucciones que se pueden utilizar:
 
 - `ENV <VAR_NAME> <value>`: crea una variable de entorno que será utilizada en los contenedores que se levanten en base a la imagen que se está buildeando. Esta variable puede ser utilizada dentro de un comando `RUN` dentro del mismo Dockerfile.
 
-- `FROM <nombre imagen padre>`: especifica la imagen en base a la cuál se creará la imagen de la aplicación.
+- `FROM <nombre imagen padre>[:<tag>]`: especifica la imagen en base a la cuál se creará la imagen de la aplicación. Se le puede especificar un tag; en caso de que no se lo haga, se descargará la versión "latest".
 
 - `WORKDIR <directorio dentro de la imagen>`: especifica un directorio donde se ejecutarán todas las instrucciones que se encuentren abajo de ésta.
 
