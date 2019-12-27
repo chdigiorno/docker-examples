@@ -1,41 +1,41 @@
-## Conceptos Generales
+## General Concepts
 
-### Modos de operación de un sistema operativo
-Los sistemas operativos manejan de manera diferente la ejecución de su propio código y el código definido por el usuario. Para el primer caso se emplea el uso del kernel, un programa que funciona como el núcleo del sistema operativo con control total sobre el sistema.
-- Modo kernel: es el modo que se utiliza con el fin de proteger al sistema operativo, ya que existe la posibilidad donde el código que se debe ejecutar pueda causar daño; por lo tanto, la protección se consigue permitiendo la ejecución algunas de las instrucciones calificadas como privilegiadas (aquellas que pueden provocar alteraciones en el sistema operativo, sus recursos, o dispositivos de entrada/salida) únicamente en este modo.
-- Modo usuario: este modo se utiliza cuando se está ejecutando una aplicación de usuario, pero es necesario realizar el cambio al modo kernel cada vez que se requiera la ejecución de una o más instrucciones privilegiadas. Una vez que éstas terminan, se vuelve al modo usuario.
+### Execution modes in operating systems
+Operating systems (OS) manage differently the execution of their own code and the code defined by the user. For the former, they utilize their [kernel](https://en.wikipedia.org/wiki/Kernel_(operating_system), which is a program that functions as the OS's core, and has total control over the system.
+- Kernel mode: it is the mode that is used in order to protect the OS, because the code that has to be run might have instructions that can cause damage; therefore, the system is protected by allowing the execution of instructions known as privileged (those that can cause alterations in the OS, its resources, or input/output devices) only in this mode.
+- User mode: this mode is used when a user application is being run; however, it is necessary to switch to kernel mode every time a privileged instruction needs to be executed. Once that instruction is finished, it goes back to user mode.
 
-### Virtualización
-Es el proceso de crear una representación virtual de algo, como aplicaciones, servidores, dispositivos de almacenamiento, y redes. El ejemplo más clásico de virtualización consiste en tener múltiples sistemas operativos (considerados invitados/guests) corriendo en otro (anfitrión/host).
+### Virtualization
+It is the process of creating a virtual representation of something such as applications, servers, storage devices, and networks. One of the most classic examples of virtualization is one or more OS (known as guests) running within another OS (the host).
 
-A las aplicaciones que corren en una máquina virtualizada les parece que están utilizando directamente el hardware, pero esto es solamente una ilusión; lo que se supone que es un acceso al hardware no es más que una emulación realizada mediante software denominado hypervisor.
+Applications running in a virtual machine cannot access the hardware directly; every time they try, an emulation is run by a software called [hypervisor](https://docs.oracle.com/cd/E50245_01/E50249/html/vmcon-hypervisor.html) in order to complete the task.
 
-Podemos decir que una máquina virtual representa una virtualización a nivel de hardware. Está aislada del host, manejando su propio kernel y sus propios recursos.
+We can say that a virtual machine represents a hardware level virtualization. It is isolated from the host, managing its own kernel and resources.
 
-### Containerización
-La containerización es la técnica de traer virtualización al nivel del sistema operativo; el kernel permite la existencia de múltiples instancias isoladas en user-space. No se utiliza un hypervisor, debido a que no se busca virtualizar a nivel de hardware, lo cual agiliza su funcionamiento.
+### Containerization
+It is a method for bringing virtualization to OS level; the kernel allows the existence of multiple isolated user-space instances. It does not require a hypervisor, since the goal is not hardware level virtualization, which speeds up its operational time.
 
-Debido a que el contenedor corre sin la necesidad de bootear un sistema operativo, es liviano y limita los recursos (ej. memoria) que son necesarios para que pueda mantenerse en ejecución.
+As a container runs without the need of booting an OS inside, it is lightweight and limits the resources (e.g. memory) it uses to keep running.
 
-Implica empaquetar una aplicación con todos sus archivos de configuración, librerías y dependencias requeridas para que pueda correr de una manera eficiente, y logrando siempre el mismo funcionamiento en distintos entornos.
+The application you want to run in the container is packaged along with all the configuration files, libraries and dependencies it requires, and will function consistently in different environments.
 
 
 ## Docker
-Docker es una plataforma de containerización que empaqueta una aplicación junto con todas sus dependencias en la forma de contenedores.
+Docker is a containerization platform that packages an application along with all its dependencies as containers.
 
-- Cada aplicación correrá en un contenedor separado y tendrá su propio set de librerías y dependencias.
-- También se asegurará de que haya aislamiento a nivel de proceso, lo cual significa que las aplicaciones son independientes entre sí, dando la seguridad al desarrollador de poder dejar corriendo aplicaciones sin interferencias entre ellas.
+- Every application runs in a separate container and has its own set of libraries and dependencies
+- It will also make sure there will be process level isolation, which means the applications will be independent of each other, and thus there will be no interference between them.
 
-Una de sus mayores características es la simplificación de configuraciones; aunque una máquina virtual es capaz de correr en cualquier plataforma con una configuración propia, Docker provee el mismo beneficio con un "overhead" notablemente menor.
+Even though a virtual machine is able to run in any platform using its own configuration, Docker provides a similar benefit but with a noticeably lower overhead.
 
-Docker ofrece a los desarrolladores un mayor control y autonomía sobre la plataforma donde se corre el software, con todas sus dependencias ya definidas e integradas y listo para ser deployeado. Los requerimientos de la aplicación quedan desacoplados de los requerimientos de la infraestructura.
+Docker offers developers greater control and autonomy over the platform the software is being run in, with all its dependencies already defined and integrated, and ready to be deployed. The application's requirements are disengaged from the infrastructure's.
 
-A la hora de desarrollar y probar el funcionamiento de una aplicación, es deseable que el entorno de desarrollo sea lo más parecido posible al de producción. Al mismo tiempo, también es útil que el mismo sea lo más rápido posible, ya que se busca un uso interactivo. Teniendo en cuenta todo lo dicho hasta ahora, podemos afirmar que Docker viene como anillo al dedo, debido a su performance y la facilidad que provee para configurar aplicaciones.
+When it comes to developing and testing an application, it is desirable for the development environment to be as similar as possible to the productive environment. On the other hand, it should be as fast as possible, as an interactive usage is sought.
 
-Como Docker corre imágenes de Linux, utilizarlo en Windows o MacOS implica la utilización de herramientas de Docker que emplean virtualización de máquinas, perdiéndose performance de manera notable. Sin embargo, se introdujo la existencia de contenedores de Windows, los cuales utilizan los binarios del sistema operativo, eliminando la necesidad de depender de máquinas virtuales y hypervisors.
+Since Docker runs Linux images, employing it on Windows or MacOS implies using tools for machine virtualization, greatly losing performance. However, [Docker Windows Containers](https://www.docker.com/products/windows-containers) were introduced, which helps mitigating the problem.
 
 
-### Instalación
+### Installation
 ```
 sudo apt-get update
 sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
@@ -46,165 +46,164 @@ sudo apt-get install docker-ce
 sudo groupadd docker
 sudo gpasswd -a $USER docker
 logout
---------- entrar de nuevo
+--------- log in again so you don't need to run docker with sudo
 docker run hello-world
-  # Si tira error (trusty 14.04?):
+  # If it throws an error (trusty 14.04?):
     sudo apt-get -y install --force-yes docker-ce=18.06.1~ce~3-0~ubuntu
     docker run hello-world
 ```
 
 
-### Contenedores de Docker
-Un contenedor de Docker es una instancia en ejecución de una imagen. A partir de una misma imagen, se puede crear varios contenedores (todos corriendo la misma aplicación). Un contenedor corre como un proceso en el host.
+### Docker containers
+A Docker container is a running instance of an image as a process within the host. From that same image, multiple containers can be created.
 
-La plataforma siempre está corriendo encima del host. Los contenedores contienen los binarios, librerías, y a la aplicación en sí. Como esos binarios y librerías corren en el kernel del host, es posible procesar ejecutar rápidamente.
+Containers contain all the binaries, libraries, and the application itself. Since those binaries and libraries are run with the host's kernel, it is possible to do so rapidly.
 
-En contraste, las máquinas virtuales corren en un hypervisor e incluyen su propio sistema operativo. Esto incrementa su tamaño notablemente, haciendo que setupear máquinas virtuales sea más complejo y requiera más recursos tener corriendo cada una.
-
-La containerización es más eficiente debido a que no hay otro sistema operativo más, y se comparten librerías y recursos a medida que se van necesitando.
+In contrast, virtual machines run with a hypervisor and have their own OS. This notably increments its size, making setting virtual machines be more complex and require more resources to keep running. Containers are more efficient because there are no extra OS involved, and the libraries and resources they use are shared as they are needed.
 
 
-### Imágenes
-Una imagen de Docker contiene todo lo necesario para correr una aplicación como un container. Esto incluye:
+### Images
+An image contains everything required to run applications in containers. This includes:
 
-- código
-- librerías
-- variables de entorno
-- archivos de configuración
+- code
+- libraries
+- environment variables
+- configuration files
 
-Como todas las dependencias de la aplicación ya existen dentro de la imagen, se simplifica y acelera significativamente el proceso de deploy a otras computadoras. Lo único que éstas requieren es, por supuesto, tener Docker instalado.
+Since all the application's dependencies already exist within the image, the deployment process to other computers is fast. All they require is, of course, having Docker installed.
 
-Para crear una imagen, se utiliza un archivo de texto llamado Dockerfile, en el cual se especifican todos los comandos necesarios.
+In order to create an image locally, we use a text file called Dockerfile, within which all the instructions that need to be executed and an image that must be used as a base are specified. Or, if you want to use an already existing image, you can download it from https://hub.docker.com if it has been uploaded there.
 
-Una imagen de docker puede ser buildeada localmente en base a otra, o descargada de hub.docker.com.
+#### Layers
+An image contains layers; every one of them is a set of differences from the previous layer caused by certain instructions in the Dockerfile. Docker uses a layer cache to optimize the image generation process, making it become faster since it will not have to be rebuilt from scratch.
 
-#### Capas
-Una imagen contiene capas; cada una de ellas es un conjunto de diferencias con respecto a la capa anterior causadas por determinadas instrucciones del Dockerfile. Docker utiliza una caché de capas para optimizar el proceso de generación de imágenes, logrando que sea más rápido debido a que éstas no se deben rebuildear desde cero.
+Some of the possible commands for the Dockerfile (ADD, RUN and COPY) cause the previous image to change, creating new layers. However, if an instruction for which there is no cached layer is found (which happens if you modify an existing instruction or write a new one) while building the image, the cache will not be used from that point onward; it is convenient to minimize the cache invalidation with practices such as avoiding writing commands that are often modified at the beginning of the Dockerfile (they could be left for execution as late as possible).
 
-Hay comandos especificables para el Dockerfile (ADD, RUN y COPY) que causan que la imagen anterior cambie, creando capas nuevas. Aunque existen otros comandos utilizables, éstos solamente crean capas intermedias que no influencian en el tamaño de la imagen. Sin embargo, si al momento de buildear la nueva imagen se encuentra una instrucción para la cual no hay una capa cacheada, no se intentará leer de la caché ninguna de las siguientes instrucciones, por lo que es conveniente llevar a cabo prácticas para minimizar la invalidación de la caché como solamente copiar archivos que sean necesarios en el próximo paso y evitar usar comandos al principio del Dockerfile que siempre vayan a generar cambios.
+The problematic part is that layers increase the image's size, which means it will occupy more space, take longer to be downloaded, and it is even possible that some components will be part of it even if it won't be used in the future. I suggest that you write multiple related commands in the same line.
 
-La parte problemática de las capas es que aumentan el tamaño de la imagen, haciendo que ocupen más espacio, se tarde más en descargarlas, e incluso es posible que queden componentes que jamás vayan a ser usados.
-
-Se recomienda fuertemente no utilizar comandos como `apt-get update` en una instrucción separada a la instrucción donde se realizan instalaciones en base al update, debido a que el `update` puede estar cacheado (por lo que no se ejecutará) pero cambiar las instalaciones va a invalidar la caché y puede haber problemas con los paquetes a descargar; en vez de eso, conviene juntar todo en una sola instrucción del Dockerfile.
+Furthermore, it is strongly recommended not to use commands such as `apt-get update` in a separate instruction from the one that will install packages, since the update might be cached (which means Docker will not run it) and changing the packages to be installed will make it so Docker does run them; there might be issues regarding the versions that can be found available and the ones that the installation might be trying to search for. Therefore, it's best to write the apt update and install instructions in the same line.
 
 
-### Persistencia en Docker
-Un volumen es un mecanismo de persistencia de datos utilizado por contenedores de Docker. Su ciclo de vida es independiente del contenedor junto con el cual fue creado; se puede borrar dicho contenedor sin que el volumen desaparezca. Los datos se almacenan en el host, generalmente en `/var/lib/docker/volumes`, y solamente pueden ser modificados por procesos de Docker.
+### Data persistence in Docker
+Data isn't persisted once a container no longer exists, which is why volumes exist.
+A volume is a data persistence mechanism used by Docker containers. Its life cycle is independent from the container's; said container can be brought down without the volume disappearing. The data is stored in the host, generally in /var/lib/docker/volumes.
 
-Los bind mounts son parecidos; hay dos direcciones, una en el host y otra en el contenedor, que apuntan a un mismo archivo. Al contrario de los volúmenes, no pueden ser configurados en un Dockerfile. Pueden existir en el filesystem del host, y ser modificados por procesos fuera de Docker.
+Bind mounts are a similar option; there are two locations, one from the host and another one from the container, that point to the same file. Unlike volumes, they cannot be configured in a Dockerfile. They can exist in the host's filesystem, and be modified by other containers or the host's processes.
 
 
 ### Dockerfile
+It is the file where the instructions that need to run on a parent image will be specified. It is used to build an image which will be used to set up containers with the command `docker run`.
 
-Es el archivo que contiene las instrucciones que se correrán sobre una imagen padre especificada. Se lo utiliza a la hora de buildear una imagen, cuyos contenedores serán levantados con el comando `docker-run`.
+Instructions that can be used:
+_Note: anything between [] is optional._
 
-Instrucciones que se pueden utilizar:
+- `ARG <VAR_NAME>=<value>`: it creates a variable with a default value; a different value can be assigned directly as an argument in the `docker build` as `--build-arg <VAR_NAME>=<value>`. ARG can be used one o more times, but _only_ above the FROM instruction, and it only exists while the image is being built.
 
-- `ARG <VAR_NAME>=<value>`: crea una variable con un valor default; se le puede asignar otro distinto enviándolo directamente por parámetro en el `docker build` de la forma `--build-arg <VAR_NAME>=<value>`. ARG puede ser utilizado una o más veces, pero sólo arriba de la instrucción `FROM`. Sirve solamente dentro del proceso de buildeo de la imagen.
+- `ENV <VAR_NAME> <value>`: it creates an environment variable that will be used in the containers setup based on the image being built. This variable can be used in a RUN instruction within the same Dockerfile.
 
-- `ENV <VAR_NAME> <value>`: crea una variable de entorno que será utilizada en los contenedores que se levanten en base a la imagen que se está buildeando. Esta variable puede ser utilizada dentro de un comando `RUN` dentro del mismo Dockerfile.
+- `FROM <parent image's name>[:<tag>]`: it specifies the image the new one will be based on. A tag can be specified por it; in case it isn't, the "latest" version will be downloaded.
 
-- `FROM <nombre imagen padre>[:<tag>]`: especifica la imagen en base a la cuál se creará la imagen de la aplicación. Se le puede especificar un tag; en caso de que no se lo haga, se descargará la versión "latest".
+- `WORKDIR <directory inside the image>`: it specifies a directory where all the instructions below will be run.
 
-- `WORKDIR <directorio dentro de la imagen>`: especifica un directorio donde se ejecutarán todas las instrucciones que se encuentren abajo de ésta.
+- `RUN <command>`: it executes a command inside the image.
 
-- `RUN <comando>`: se ejecuta un comando dentro de la imagen.
+- `COPY [--chown=<user>:<group>]<source inside the host> <path inside the image>`: copies a file or directory and adds it to the container's filesystem.
 
-- `COPY <directorio donde se encuentra el Dockerfile> <directorio dentro de la imagen>`: copia un archivo que existe dentro del host, buscando a partir de donde se encuentra ubicado el Dockerfile, y lo replica dentro de un directorio perteneciente a la imagen a crear.
+- `ADD [--chown=<user>:<group>] <src> <dest>`: copies a file or directory from the host or files from a URL and adds them to the image's filesystem. It works differently from COPY, supporting URLs and local ".tar" extractions. It is recommended to avoid this instruction and use COPY or multiple RUNs instead, since ADD does has an ocasionally unpredictable managment of tards and, even though it offers extractions, it does not do them when the file comes from a URL (the extractions, then, have to be done through RUNs, adding layers to the image). The option `--chown` is only for Linux based containers.
 
-- `ADD [--chown=<usuario>:<grupo>] <src> <dest>`: copia un archivo que existe dentro del host o pertenezca a una URL, y lo replica dentro de un directorio perteneciente a la imagen a crear. Funciona distinto a `COPY`, con soporte de URLs y extracciones de .tar de forma local. Entre las buenas prácticas de Docker, se recomienda evitar usar esta instrucción y usar `COPY` o múltiples `RUN`, ya que posee un manejo ocasionalmente impredecible de tars y, aunque ofrece extracciones, no lo realiza cuando el archivo proviene de una URL (la extracción se debe hacer mediante un `RUN` en el Dockerfile, lo cual implica una capa más, aumentando el tamaño de la imagen). La opción `--chown` solamente puede ser usada para contenedores de Linux.
+- `VOLUME <directory inside the image>`: it specifies a directory where the container will write some of the application's data for its persistence. The volume is configured regardless of what might be written in the `docker run` command. None of the instructions in the Dockerfile will be able to make changes in the directory's tree. Paths from the host cannot be used (these are anonymous volumes). (Recommendation: create named volumes in the `docker run` command)
 
-- `VOLUME <directorio dentro de la imagen>`: especifica dónde el contenedor va a escribir datos de la aplicación para su persistencia. El volumen es configurado independientemente de lo que se haga en el `docker run`; ningún paso del Dockerfile podrá hacer cambios dentro del árbol de ese directorio. No se pueden utilizar paths del host; son volúmenes anónimos. (Recomendación: crear volúmenes con nombre en el `docker run`)
+- `USER <user name>[:group name>]`: it specifies the username (or UID) and, optionally, the user's group (or GID) to be used when running the image and executing the Dockerfile's instructions.
 
-- `USER <nombre de usuario>[:<nombre de grupo>]`: especifica el nombre de usuario (o UID) y, opcionalmente, el grupo de usuario (o GID) a usar al correr la imagen y para ejecutar las instrucciones del Dockerfile que se encuentren abajo de ésta.
+- `EXPOSE <port> [<port>/<protocol>]`: it informs Docker that the container will listen on the specified network ports at runtime, allowing other containers to communicate with this one. The port is not published for processes outside of Docker (that has to be done in the `docker run` command). By default, the protocol is TCP.
 
-- `EXPOSE <puerto> [<puerto>/<protocolo>]`: le informa a Docker que el contenedor escuchará en los puertos especificados, permitiendo que los demás contenedores se puedan comunicar con éste; el puerto no se publica para procesos ajenos a Docker con esta instrucción (lo cual se hace en el `docker run`). Por default, el protocolo es TCP.
+- `ENTRYPOINT`: it specifies an instruction for the container to execute when it starts running. There is always one; if none are specified in the Dockerfile or `docker run`, it's `/bin/sh -c`. If an executable is run, it will use the arguments passed to `docker run`, or the ones the CMD instruction contains. If CMD is used, it *must* be below ENTRYPOINT. There are 2 ways to use ENTRYPOINT:
+  - Exec form: `ENTRYPOINT ["command or executable file", "argument 1", "argument 2", ..., "argument N"]` -> it uses the specified arguments _and_ the ones in the CMD instruction or `docker run`.
+  - Shell form: `ENTRYPOINT <command> <argument 1> <argument 2> ... <argument N>` -> it ignores any other arguments.
 
-- `ENTRYPOINT`: especifica una instrucción para que ejecute el contenedor al ser levantado. Siempre hay uno; si no se lo especifica en el Dockerfile o en el `docker run`, es `/bin/sh -c`. Si corre un ejecutable, usará los parámetros que se le pasen al `docker run`, o los que contenga `CMD`. Si se utiliza `CMD`, éste debe estar abajo de `ENTRYPOINT`. Existen 2 formas de utilizarlo:
-  - Forma exec: `ENTRYPOINT ["comando o archivo ejecutable", "parámetro 1", "parámetro 2", ..., "parámetro N"]` -> se utilizan los parámetros especificados más los que se le intente enviar mediante `CMD` o `docker run`.
-  - Forma shell: `ENTRYPOINT <comando> <parámetro 1> <parámetro 2> ... <parámetro N>` -> ignora cualquier parámetro que se le intente enviar mediante `CMD` o `docker run`.
-
-- `CMD`: especifica una instrucción para que ejecute el contenedor al ser levantado, aunque si se provee uno en el `docker run` se utilizará ese. Solamente puede haber *un* `CMD` en el mismo Dockerfile. Existen 3 formas de utilizarlo:
-  - Forma exec: `CMD ["comando o archivo ejecutable", "parámetro 1", "parámetro 2", ..., "parámetro N"]` -> se ejecuta el ejecutable de forma directa, sin ningún shell processing.
-  - Forma shell: `CMD <comando> <parámetro 1> <parámetro 2> ... <parámetro N>` -> se ejecuta el comando de la forma `/bin/sh -c <comando + parámetros>`, aplicando utilidades de shell como reemplazo de variables de entorno y permitiendo el uso de backslashes (`\`) para continuar la instrucción en la siguiente línea del Dockerfile.
-  - Forma de parámetros default para `ENTRYPOINT`: `CMD ["parámetro 1", "parámetro 2", ..., "parámetro N"]` -> se utiliza cuando se emplea el uso de `ENTRYPOINT`, pasándole al mismo parámetros default que se usan en los casos donde al contenedor no se le den unos.
-
-
-### Algunos comandos
-
-`docker ps` -> muestra los contenedores que están levantados (agregar `-a` muestra también los que terminaron de ejecutar)
+- `CMD`: it specifies an instruction for the container to execute when it starts running, although if there is another instruction defined in `docker run` then that one will be used. There can only be *one* CMD in the same Dockerfile. There are three ways to use it:
+  - Exec form: `CMD ["command or executable file", "argument 1", "argument 2", ..., "argument N"]` -> the executable is run directly, without any shell processing.
+  - Shell form: `CMD <command> <argument 1> <argument 2> ... <argument N>` -> the command is run as `/bin/sh -c <command + arguments>`, applying shell utilities like environment variables replacement and allowing the use of backslashes (`\`) to continue with the CMD instruction in the Dockerfile's next line.
+  - Arguments for `ENTRYPOINT`: `CMD ["argument 1", "argument 2", ..., "argument N"]` -> it is used when a `ENTRYPOINT` is specified, giving it default arguments in case the container is not provided with them.
 
 
-`docker images` -> muestra la lista de imágenes existentes localmente
+### Some Docker commands
+`docker ps` -> shows running containers (adding `-a` at the end makes it show stopped containers as well)
 
 
-`docker pull {nombre imagen}` -> descarga la imagen especificada de dockerhub, ahorrando tener que hacerlo al querer levantar containers de esa imagen
+`docker images` -> shows a list of existing images in the computer
 
 
-`docker build -t {nombre custom que se le dará a la imagen} --build-arg {variable}={valor} .` -> crea una imagen utilizando el Dockerfile existente en el directorio y uno o más argumentos a través de `--build-arg` (se lo puede utilizar más de una vez) que reemplazarán los especificados con `ARG` en el Dockerfile
+`docker pull {image name}` -> downloads the image from dockerhub, avoiding having to do it when setting up containers with that image
 
 
-`docker run -dit -p 80:80 --env-file={nombre del env_file} {nombre imagen} {comando}` -> levanta un contenedor en base a una imagen
+`docker build -t {custom name for the image} [--build-arg {variable name}={value}] .` -> creates an image using a Dockerfile and, optionally, uses one or more variables received as arguments (they replace variables previously set with the same name in the Dockerfile through the ARG instruction)
 
-- se puede agregar `–name {nombre custom}` para darle un nombre custom al contenedor
-- se puede especificar al final un comando que el contenedor deba correr (si no se escribe ninguno, se utiliza el descripto en el Dockerfile), y un entrypoint con `--entrypoint {ejecutable}` para overridear el especificado en el Dockerfile (o el default)
-- `-d`: levanta un contenedor de forma "detachada"; corre en el background en vez de apoderarse de la consola
-- `-t`: queremos que haya una pseudo-tty/terminal (text input output environment) generada que sh/bash puedan usar (ej. `docker run ubuntu:14.04` cortaría enseguida por no encontrar ninguna terminal ni tener nada que hacer)
-- `-i`/`--interactive` permite enviar comandos al contenedor mediante input estándar ("STDIN"), lo cual significa que se puede tipear comandos a la pseudo-tty/terminal creada por `-t` de forma interactiva
+
+`docker run -dit -p 80:80 [--env-file={env_file name}] [--name {custom name for container}] {image name}[:tag] [{command}] [--entrypoint {entrypoint}]` -> sets up a container based on an image (and, optionally, a tag for that image); it is also possible to give the container a name, a command and/or an entrypoint (which will replace the Dockerfile's), and provide an env_file so Docker can read its variables
+
+- `-d`: sets up the container in detached mode, so it runs in the background instead of attaching to the terminal (if the terminal is killed, the container stops as well)
+- `-t`: allocates a pseudo-tty (text input output environment) that sh/bash can use (e.g. `docker run ubuntu:14.04` would stop instantly because it would be unable to use a terminal and have nothing to do)
+- `-i`/`--interactive` allows to send commands to the container through standard input ("STDIN"); interactive processes require the use of both -i and -t (-it) together in order to allocate a tty for the container
 - `-p`: especifica el puerto a utilizar en el host, y el puerto a utilizar en el contenedor
-  - `--expose`: el servicio en el contenedor no sería accesible desde afuera de Docker; solamente desde adentro de otros contenedores. `-p` sin `--expose` lo usa implícitamente
-- `--env-file`: especifica el nombre de un env_file, el cual es archivo que contiene una o más variables de entorno para utilizar en el contenedor; en caso de que una variable de entorno existiese previamente por haber sido creada en el Dockerfile, ésta es reemplazada por la nueva
+- `-p`: takes a port from the host and a port from the container, and exposes the latter so it becomes reachable from the host
+  - `--expose` instead of `-p`: the container can only be accessed from other Docker containers (using `-p` uses `--expose` implicitly)
+- `--env-file`: specifies an env_file's name, which is a file that contains one or more environment variables to use in the container; if an env var were to already exist because it was created by the Dockerfile, it is replaced
 
 
-`docker start {id container}` -> levanta contenedores detenidos
+
+`docker start {container id}` -> starts a stopped container
 
 
-`docker stop {id container}` -> corta la ejecución de un contenedor
+`docker stop {container id}` -> stops a running container
 
-- Diferencia entre stop y kill:
-  - Stop: al proceso principal del contenedor se le envía la señal SIGTERM y, después de un tiempo, SIGKILL
-  - Kill: al proceso principal del contenedor se le envía la señal SIGKILL, o alguna otra especificada con la opción `-signal`
-- En ambos casos, los cambios al filesystem serán persistidos al momento de usar stop o kill, así que usar `docker start {contenedor}` continuará desde donde estaba.
+- Difference between `stop` and `kill`:
+  - Stop: the container's main process receives the SIGTERM signal and, after a grace period, SIGKILL
+  - Kill: the container's main process receives the SIGKILL signal, or another one specified with `--signal {signal}`
+- In both cases, changes to the filesystem will be persisted, so using `docker start` will find it as it was before
 
-Extra: `docker stop $(docker ps -q)` -> busca los contenedores que están corriendo, uno por uno, y los detiene
-
-
-`docker rm {id contenedor}` -> borra un contenedor
-
-- `--force`: es necesario usarlo si el contenedor está corriendo
+Extra: `docker stop $(docker ps -q)` -> looks for every running container and stops them one by one
 
 
-`docker rmi {id imagen}` -> borra una imagen
+`docker rm {container id}` -> deletes the container
+
+- `--force`: it's necessary if the container is still running
 
 
-`docker run -d -p 80:80 -v {nombre para el volumen}:{path en container} {nombre imagen}`
-
-- Usando la opción `-v`, creamos volúmenes con nombre (named volumes)
-  - Ya que se puede usar `docker run -v` sin importar si se declara o no un `VOLUME`, y puede haber efectos secundarios confusos, generalmente se evita declarar `VOLUME` en los Dockerfiles.
-- En vez de un nombre para el volumen, se puede especificar un path del host, para que los datos se compartan. Es fácil saber dónde se guardarán los datos cuando el contenedor quiera escribir en el directorio, ya que se está especificando un lugar dentro del host, y Docker no se encargará de manejar todo por sí mismo. Se lo conoce como bind mount.
+`docker rmi {image id}` -> deletes the image
 
 
-`docker rm -v {container}` -> borra el container + sus volúmenes (se pueden especificar cuáles volúmenes borrar y cuáles mantener)
+`docker run -d -p 80:80 -v {name for the volume}:{path in container} {image name}`
+
+- Using `-v`, a named volume is created
+  - Since `-v` can be used regardless of whether a VOLUME was declared or not in the Dockerfile, and volumes declared in a Dockerfile might have confusing side effects, it is generally advisable to only create them with `docker run -v`.
+- Instead of a name for the volume, a path from the host can be specified so data can be shared. This is known as a bind mount, and it is easy to know where said data will be stored when the container decides to write in the specified host path.
 
 
-`docker exec -it {container id} {commando}` -> se ejecuta un comando dentro de un contenedor
+`docker rm -v {container id}` -> borra el container + sus volúmenes (se pueden especificar cuáles volúmenes borrar y cuáles mantener)
+`docker rm -v {container id}` -> deletes the container along with all its volumes (it is possible to add the names of specific volumes so the rest are kept intact)
 
 
-`docker logs {container}` -> muestra los logs del contenedor
-
-- `-t`: muestra timestamps
-- `-f`: sigue el output en vez de mostrar lo que existe y terminar
-- `--tail {número}`: cantidad de líneas a mostrar partiendo desde el final (sin este flag, muestra todas)
+`docker exec -it {container id} {command}` -> a command is executed in the container
 
 
-`docker inspect {container}` -> muestra toda la información del contenedor
+`docker logs {container id}` -> shows the container's logs
+
+- `-t`: shows timestamps for every line
+- `-f`: also follows the output instead of just showing the output and finishing
+- `--tail {number}`: amount of lines to show, starting from the bottom (without this flag, the command shows all of them)
+
+
+`docker inspect {container id}` -> shows all the container's information
 
 
 
 ## Docker Compose
-Es una herramienta que permite manejar con facilidad múltiples contenedores juntos. Funciona aplicando reglas declaradas en un archivo de configuración ".yml"; estas reglas son utilizadas para armar servicios, los cuales son representaciones de la configuración manejada por Docker-Compose que corresponderá a un contenedor especificado.
+It is a tool that allows you to easily manage multiple containers that are related to each other. It works by applying rules declared in a ".yml" configuration file; these rules are used for the services, every one of them is the representation of the configuration managed by Docker Compose that corresponds to a certain container.
 
-**Service != container**. Un contenedor se levanta en base a un servicio definido en el ".yml".
+Instead of using docker run, you merely need to run a compose command such as docker-compose up -d so all containers start one after the other.
+
+Service != container. A container starts up based on a service defined in the ".yml" file, and there can be multiple containers being run per service.
 
 
 ### Instalación
@@ -215,68 +214,70 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 
 ### Networks
-Las networks definen las reglas de comunicación entre contenedores, y entre un contenedor y su host.
-
-Los contenedores de Docker se comunican entre sí en networks creadas por Docker Compose, ya sea de forma implícita o por cómo se haya configurado la aplicación.
+Networks define communication rules between services, and between a container and its host. Docker containers on the same network can find each other and communicate.
 
 
-### Dependencias entre servicios
-A veces, necesitamos crear una cadena de dependencias entre los servicios, por lo que algunos son cargados antes que otros. Esto se logra utilizando la keyword `depends_on`.
+### Dependencies between services
+It is possible that a service needs to start before another one (e.g. the web application needs to communicate with the database's container at startup). You can set the dependency in the ".yml" file, specifying in a service's configuration which other service (or services) it needs to wait for before trying to start.
 
 
-### Algunos comandos
-
-`docker-compose ps` -> muestra los contenedores levantados relacionados a los servicios descriptos en el `.yml`
-
-
-`docker-compose images` -> muestra los contenedores con sus respectivas imágenes
+### Some compose commands
+`docker-compose ps` -> shows all running containers related to the services from the `.yml` file
 
 
-`docker-compose up` -> crea y levanta los contenedores (es una mezcla entre los comandos `create`, el cual está deprecado, y `start`) (se puede especificar uno o más servicios para no hacerlo con todos)
-
-- `-d`: levanta los contenedores de forma detachada
-- `--no-start`: no levanta los contenedores, sino que solamente los crea
+`docker-compose images` -> shows the containers and the images they use
 
 
-`docker-compose build` -> (re)buildea y taguea los servicios (ej. para cuando se modifica el Dockerfile)
+`docker-compose up {services}` -> creates and starts the containers (it's a mix between the commands `create`, which has been deprecated, and `start`); if no services are specified, then all of them are chosen
+
+- `-d`: the containers will be started in detached mode
+- `--no-start`: the containers are not started, just created
 
 
-`docker-compose stop` -> detiene los servicios (también se puede usar `kill`) (se puede especificar uno o más servicios para no hacerlo con todos)
+`docker-compose build` -> (re)builds y tags the servicies (e.g. for when the Dockerfile is modified)
 
 
-`docker-compose restart` -> reinicia los servicios (se puede especificar uno o más servicios para no hacerlo con todos)
+`docker-compose stop {services}` -> stops the services (`kill` can be used instead); if no services are specified, then all of them are chosen
 
 
-`docker-compose rm` -> elimina contenedores detenidos (se puede especificar uno o más servicios para no hacerlo con todos)
+`docker-compose restart {services}` -> resets the services; if no services are specified, then all of them are chosen
 
 
-`docker-compose down` -> detiene y elimina contenedores detenidos (se puede especificar uno o más servicios para no hacerlo con todos)
-
-- `-v`: elimina también los volúmenes declarados en el .yml
+`docker-compose rm {services}` -> deletes stopped containers; if no services are specified, then all of them are chosen
 
 
-`docker-compose exec {servicio} {comando}` -> se ejecuta un comando dentro de un servicio
+`docker-compose down {services}` -> stops and deletes containers; if no services are specified, then all of them are chosen
+
+- `-v`: also deletes the volumes declared in the .yml file
+
+
+`docker-compose exec {service} {command}` -> executes a command inside the container
 
 - `-T`: desactiva la asociación a una pseudo terminal (la cual le serviría para interactuar con ella tanto al usuario como a algunos programas)
+- `-T`: disables pseudo-tty allocation
 
 - Observación: asumiendo que dentro del contenedor existe un archivo "/tmp/prueba" no vacío, podemos intentar ejecutar el comando `docker-compose exec {servicio} cat /tmp/prueba > /tmp/prueba2` para que se cree un archivo en el mismo directorio padre con el mismo contenido. Esto no llevará a cabo el efecto esperado, sino que hará la creación y escritura del nuevo archivo en /tmp/prueba2 _dentro del host_ en vez de dentro del contenedor. Hay que poner el comando entero entre comillas y especificar que es un comando de bash, para que quede `docker-compose exec {servicio} bash -c "cat /tmp/prueba > /tmp/prueba2"` y Docker-Compose lo reconozca como un comando entero a ejecutar en el contenedor en vez de leer solamente `cat /tmp/prueba`.
+- Observation: assuming there is a non-empty file "/tmp/test.txt" inside the container, we can try to run `docker-compose exec {service} cat /tmp/test.txt > /tmp/test2.txt` so a file with the same content is created. This will not get us to the desired outcome, but will create and write the new file in "/tmp/test2.txt" _inside the host instead of the container_. We need to edit the command so Docker Compose can recognize it as a single instruction instead of just reading `cat /tmp/prueba`; it would look like `docker-compose exec {service} bash -c "cat /tmp/test.txt > /tmp/test2.txt"`.
 
 
-`docker-compose logs {servicio}` -> muestra los logs del servicio, y usa los mismos flags que `docker logs`  (aunque se puede especificar más de un servicio, no se recomienda hacerlo cuando los logs son demasiado largos por cuestiones de legibilidad)
+`docker-compose logs {service}` -> shows the container's log (even though more than one service can be specified, it is not recommended when their logs are too long for legibility reasons)
+- `-t`: shows timestamps for every line
+- `-f`: also follows the output instead of just showing the output and finishing
+- `--tail {number}`: amount of lines to show, starting from the bottom (without this flag, the command shows all of them)
 
 
 <br>
 
-Para cualquier comando de docker-compose, se puede agregar el flag `-f {path a un archivo .yml}` para que se lea como configuración.
+For any Docker compose commands, the option `-f {path to a .yml file}` can be used so its configuration is read
 
-- Compose busca un archivo `docker-compose.yml` o `docker-compose.yaml` por default; sin embargo, se puede utilizar _otro_ archivo con alguna de esas extensiones gracias al flag.
+- Compose searches for a file named `docker-compose.yml` or `docker-compose.yaml` by default; however, a file with a different name can be used through this option.
 
-- Dicho flag se puede usar más de una vez; se apunta a otros archivos que pueden agregar configuraciones.
+- This option can be used more than once; it looks for multiple files and adds their configurations.
 
 ______________
 
-## Cuándo no usar Docker (ejemplos):
+## When not to use Docker (examples):
 
-- Se quiere maximizar la performance (si bien tiene menos overhead que usar una maquina virtual, lo sigue habiendo).
-- Se considera la seguridad como algo crítico: mantener diferentes componentes de la aplicación separados en contenedores tiene sus beneficios relacionados al tema, pero trae problemas difíciles de solucionar; la tecnología de los contenedores tienen acceso a los subsistemas del kernel (por lo que un "kernel panic" causado por un contenedor afectará también al host) y sus recursos (si un contenedor puede monopolizar el uso de ciertos recursos, puede afectar a los demás contenedores, facilitando un ataque denial-of-service debido a que hay partes del sistema a las que ya no se puede acceder), y si un atacante logra el acceso a un contenedor y escapa del mismo llegando a otro o incluso al host, tendrá los mismos privilegios de usuario que tenía en el contenedor al que entró originalmente (por eso se recomienda no usar por default al usuario root).
-- Es un requerimiento no negociable que haya una interfaz gráfica dentro del contenedor; si bien existen algunos trucos que se pueden utilizar, como X-forwarding o VNC, son muy toscos.
+- You want to maximize your application's performance (even though it has less overhead than virtual machines, it is not zero)
+- You consider security as a critical consideration: keeping different components isolated in containers has its benefits, but brings a bit of trouble to the table; container technology has access to the kerlen's subsystems (so a "kernel panic" caused by a container will affect the host as well) and its resources (if a container can monopolize some of the resources, it might affect the other containers, facilitating a denial-of-service attack because there would be inaccessible parts of the system), and if an attacker manages to access a container and escape from it entering another one (or even the host), he will have the same user privileges he had in the first container he got inside of (which makes  having the root user as a default difficult to recommend)
+- Having a GUI for everything is a must; containers run on terminals and, even though there are some tricks you can use (such as X-forwarding or VNC), they are somewhat ugly and difficult to manage.
