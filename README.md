@@ -1,7 +1,7 @@
 ## General Concepts
 
 ### Execution modes in operating systems
-Operating systems (OS) manage differently the execution of their own code and the code defined by the user. For the former, they utilize their [kernel](https://en.wikipedia.org/wiki/Kernel_(operating_system), which is a program that functions as the OS's core, and has total control over the system.
+Operating systems (OS) manage differently the execution of their own code and the code defined by the user. For the former, they utilize their [kernel](https://en.wikipedia.org/wiki/Kernel_(operating_system)), which is a program that functions as the OS's core, and has total control over the system.
 - Kernel mode: it is the mode that is used in order to protect the OS, because the code that has to be run might have instructions that can cause damage; therefore, the system is protected by allowing the execution of instructions known as privileged (those that can cause alterations in the OS, its resources, or input/output devices) only in this mode.
 - User mode: this mode is used when a user application is being run; however, it is necessary to switch to kernel mode every time a privileged instruction needs to be executed. Once that instruction is finished, it goes back to user mode.
 
@@ -95,7 +95,8 @@ Bind mounts are a similar option; there are two locations, one from the host and
 It is the file where the instructions that need to run on a parent image will be specified. It is used to build an image which will be used to set up containers with the command `docker run`.
 
 Instructions that can be used:
-_Note: anything between [] is optional._
+
+_Note: anything between [ ] is optional._
 
 - `ARG <VAR_NAME>=<value>`: it creates a variable with a default value; a different value can be assigned directly as an argument in the `docker build` as `--build-arg <VAR_NAME>=<value>`. ARG can be used one o more times, but _only_ above the FROM instruction, and it only exists while the image is being built.
 
@@ -206,7 +207,7 @@ Instead of using docker run, you merely need to run a compose command such as do
 Service != container. A container starts up based on a service defined in the ".yml" file, and there can be multiple containers being run per service.
 
 
-### Instalación
+### Installation
 ```
 sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
