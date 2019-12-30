@@ -1,4 +1,4 @@
-# Si se lleva a cabo un docker build sin el parámetro "--build-arg PYTHON_VERSION={versión deseada de python}, se usa el ARG PYTHON_VERSION por default
+# If a docker build is run without the argument "--build-arg PYTHON_VERSION={desired python version}", the version in PYTHON_VERSION is used by default
 ARG PYTHON_VERSION=3.7
 FROM python:$PYTHON_VERSION
 
@@ -6,13 +6,13 @@ RUN mkdir /app
 WORKDIR /app
 COPY requirements.txt /app
 RUN pip install -r requirements.txt
-RUN django-admin startproject ejemplo_de_django_en_docker_compose
-COPY settings.py /app/ejemplo_de_django_en_docker_compose/ejemplo_de_django_en_docker_compose/settings.py  
-# ^ El COPY nos ahorra seds complejos sobre settings.py, ya que hay que modificar la sección DATABASES, algo que no pasaba en el ejemplo de Docker
+RUN django-admin startproject django_in_docker_example_with_compose
+COPY settings.py /app/django_in_docker_example_with_compose/django_in_docker_example_with_compose/settings.py  
+# ^ This COPY saves us from having to run complex `sed`s, since we have to edit the DATABASES section (that was not necessary in the Docker example)
 
 RUN echo $(find / -name settings.py)
 RUN echo $(find / -name manage.py)
-# RUN python ejemplo_de_django_en_docker_compose/manage.py migrate | No podemos correr el migrate porque el container de la db no está levantado :(
+# RUN python django_in_docker_example_with_compose/manage.py migrate | We can't run the migrations yet because db's container is not up and running yet :(
 
 COPY docker-entrypoint.sh /app
 RUN chmod 777 /app/docker-entrypoint.sh

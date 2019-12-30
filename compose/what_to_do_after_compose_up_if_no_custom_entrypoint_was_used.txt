@@ -1,0 +1,25 @@
+# Without the entrypoint sample in this repository, after setting up the app, we would have to do all of this manually:
+
+docker-compose exec web bash  # Get inside web's container
+cd django_in_docker_example_with_compose
+
+# Run migrations
+python manage.py makemigrations
+python manage.py migrate
+
+# Create a Django superuser
+python manage.py createsuperuser
+
+# Check that the superuser is in the database
+Alternative 1:
+	exit  # Get out of web's container to enter db's
+	docker-compose exec db bash  # Get inside db's container
+	psql -U postgres  # Enter postgres
+	select * from auth_user;  # This should show the created superuser
+Alternative 2:
+	apt-get update
+	apt-get install postgresql-client  # Install postgres' client to access the database from this container
+	psql -h db -U postgres
+	select * from auth_user;
+
+# And NOW we run the runserver command...

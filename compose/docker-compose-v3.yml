@@ -1,17 +1,17 @@
-# Variables de entorno
+# Environment variables
 
 version: '3'
 
 services:
   db:
-    container_name: ${DB_CONTAINER_NAME}  # Leo la variable "DB_CONTAINER_NAME" del .env
+    container_name: ${DB_CONTAINER_NAME}  # Read the env var "DB_CONTAINER_NAME" from the .env file
     image: postgres
     networks:
       - best_network_ever
   web:
-    container_name: ${WEB_CONTAINER_NAME}  # Leo la variable "WEB_CONTAINER_NAME" del .env
-    build: .  # Esto significa que docker-compose debe usar el Dockerfile que se encuentra en este mismo directorio
-    command: python /app/ejemplo_de_django_en_docker_compose/manage.py runserver 0.0.0.0:8000
+    container_name: ${WEB_CONTAINER_NAME}  # Read the env var "WEB_CONTAINER_NAME" from the .env file
+    build: .  # This means that docker-compose must use the Dockerfile found in the same directory
+    command: python /app/django_in_docker_example_with_compose/manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
     networks:
@@ -19,9 +19,9 @@ services:
     depends_on:
       - db
     env_file:
-      - .env  # En este .env hay credenciales! No hacer en un proyecto real!
+      - .env  # There are credentials in this .env! Be aware of potential security issues in a real project!
 
 networks:
-  best_network_ever:  # El ":" es intencional, ya que más abajo se le podría agregar configuraciones
+  best_network_ever:  # The ":" is intentional, since configurations can be provided below
 
 # db -> web
