@@ -36,21 +36,52 @@ Since Docker runs Linux images, employing it on Windows or MacOS implies using t
 
 
 ### Installation
+
+#### Ubuntu
 ```
 sudo apt-get update
 sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu  $(lsb_release -cs)  stable"
 sudo apt-get update
-sudo apt-get install docker-ce
+sudo apt-get install -y docker-ce
+sudo docker run hello-world
+  # If it throws an error (trusty 14.04?):
+    sudo apt-get -y install --force-yes docker-ce=18.06.1~ce~3-0~ubuntu
+    sudo docker run hello-world
+```
+
+#### Debian
+```
+sudo apt-get update
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+sudo apt-get update
+sudo apt-get install -y docker-ce
+sudo docker run hello-world
+```
+
+#### CentOS
+```
+sudo yum -y update
+sudo yum -y install yum-utils device-mapper-persistent-data lvm2 epel-release
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum-config-manager --enable rhel-7-server-extras-rpms
+sudo yum install -y docker-ce docker-ce-cli containerd.io
+sudo systemctl enable docker && sudo systemctl start docker
+sudo docker run hello-world
+```
+
+#### Post installation
+Manage Docker as a non-root user:
+```
 sudo groupadd docker
 sudo gpasswd -a $USER docker
 logout
---------- log in again so you don't need to run docker with sudo
+# Log in again so you don't need to run docker with sudo
+# Try running hello-world again, but without sudo
 docker run hello-world
-  # If it throws an error (trusty 14.04?):
-    sudo apt-get -y install --force-yes docker-ce=18.06.1~ce~3-0~ubuntu
-    docker run hello-world
 ```
 
 
@@ -209,7 +240,9 @@ Service != container. A container starts up based on a service defined in the "
 
 ### Installation
 ```
-sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+# At the time of writing (Dec. 2019), the current stable release of Docker Compose is 1.25.0. However, feel free to change it.
+COMPOSE_VERSION=1.25.0
+sudo curl -L "https://github.com/docker/compose/releases/download/$COMPOSE_VERSION/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ```
 
