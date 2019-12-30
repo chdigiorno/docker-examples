@@ -1,0 +1,1 @@
+docker run -dit -p 9876:8009 -v /home/cdigiorno/projects/docker-examples/docker/volume_content:/tmp/volume_content_inside_container_that_can_be_seen_and_therefore_it_can_be_proven_that_this_run_command_worked_wonderfully --name dd django_in_docker_example
