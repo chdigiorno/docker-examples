@@ -25,3 +25,5 @@ networks:
   best_network_ever:  # The ":" is intentional, since configurations can be provided below
 
 # db -> web
+
+# Note: even though I say the containers' names are read from the .env file, that is NOT because I specified "env_file" for the web service; compose already exported the variables from the file.
